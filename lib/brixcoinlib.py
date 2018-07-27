@@ -200,14 +200,14 @@ def SHIM_serialise_for_brixcoind(sentinel_hex):
     # unpack
     obj = deserialise(sentinel_hex)
 
-    # shim for dashd
+    # shim for brixcoind
     govtype_string = GOVOBJ_TYPE_STRINGS[obj['type']]
 
-    # superblock => "trigger" in dashd
+    # superblock => "trigger" in brixcoind
     if govtype_string == 'superblock':
         govtype_string = 'trigger'
 
-    # dashd expects an array (will be deprecated)
+    # brixcoind expects an array (will be deprecated)
     obj = [(govtype_string, obj,)]
 
     # re-pack
@@ -236,7 +236,7 @@ def did_we_vote(output):
     err_msg = ''
 
     try:
-        detail = output.get('detail').get('dash.conf')
+        detail = output.get('detail').get('brixcoin.conf')
         result = detail.get('result')
         if 'errorMessage' in detail:
             err_msg = detail.get('errorMessage')
