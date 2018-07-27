@@ -350,7 +350,7 @@ class Proposal(GovernanceClass, BaseModel):
 
     def is_expired(self, superblockcycle=None):
         from constants import SUPERBLOCK_FUDGE_WINDOW
-        import dashlib
+        import brixcoinlib
 
         if not superblockcycle:
             raise Exception("Required field superblockcycle missing.")
@@ -362,7 +362,7 @@ class Proposal(GovernanceClass, BaseModel):
         # half the SB cycle, converted to seconds
         # add the fudge_window in seconds, defined elsewhere in Sentinel
         expiration_window_seconds = int(
-            (dashlib.blocks_to_seconds(superblockcycle) / 2) +
+            (brixcoinlib.blocks_to_seconds(superblockcycle) / 2) +
             SUPERBLOCK_FUDGE_WINDOW
         )
         printdbg("\texpiration_window_seconds = %s" % expiration_window_seconds)
@@ -445,7 +445,7 @@ class Superblock(BaseModel, GovernanceClass):
         # it's a string from the DB...
         addresses = self.payment_addresses.split('|')
         for addr in addresses:
-            if not brixcoinlib.is_valid_dash_address(addr, config.network):
+            if not brixcoinlib.is_valid_brixcoin_address(addr, config.network):
                 printdbg("\tInvalid address [%s], returning False" % addr)
                 return False
 
@@ -478,8 +478,8 @@ class Superblock(BaseModel, GovernanceClass):
         return True
 
     def hash(self):
-        import dashlib
-        return dashlib.hashit(self.serialise())
+        import brixcoinlib
+        return brixcoinlib.hashit(self.serialise())
 
     def hex_hash(self):
         return "%x" % self.hash()
