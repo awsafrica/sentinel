@@ -32,11 +32,11 @@ class GovernanceClass(object):
             self.vote(brixcoind, models.VoteSignals.valid, models.VoteOutcomes.yes)
         else:
             printdbg("Voting INVALID! %s: %d" % (self.__class__.__name__, self.id))
-            self.vote(dashd, models.VoteSignals.valid, models.VoteOutcomes.no)
+            self.vote(brixcoind, models.VoteSignals.valid, models.VoteOutcomes.no)
 
     def get_submit_command(self):
         import brixcoinlib
-        obj_data = brixcoinlib.SHIM_serialise_for_dashd(self.serialise())
+        obj_data = brixcoinlib.SHIM_serialise_for_brixcoind(self.serialise())
 
         # new objects won't have parent_hash, revision, etc...
         cmd = ['gobject', 'submit', '0', '1', str(int(time.time())), obj_data]
@@ -66,7 +66,7 @@ class GovernanceClass(object):
 
         return binascii.hexlify(simplejson.dumps(self.get_dict(), sort_keys=True).encode('utf-8')).decode('utf-8')
 
-    def dashd_serialise(self):
+    def brixcoind_serialise(self):
         import brixcoinlib
         return brixcoinlib.SHIM_serialise_for_brixcoind(self.serialise())
 
