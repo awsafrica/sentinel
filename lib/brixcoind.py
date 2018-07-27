@@ -1,5 +1,5 @@
 """
-dashd JSONRPC interface
+brixcoind JSONRPC interface
 """
 import sys
 import os
@@ -31,7 +31,7 @@ class BrixcoinDaemon():
         return AuthServiceProxy("http://{0}:{1}@{2}:{3}".format(*self.creds))
 
     @classmethod
-    def from_dash_conf(self, brixcoin_dot_conf):
+    def from_brixcoin_conf(self, brixcoin_dot_conf):
         from brixcoin_config import BrixcoinConfig
         config_text = BrixcoinConfig.slurp_config_file(brixcoin_dot_conf)
         creds = BrixcoinConfig.get_rpc_creds(config_text, config.network)
@@ -50,7 +50,7 @@ class BrixcoinDaemon():
         return [Masternode(k, v) for (k, v) in mnlist.items()]
 
     def get_current_masternode_vin(self):
-        from dashlib import parse_masternode_status_vin
+        from brixcoinlib import parse_masternode_status_vin
 
         my_vin = None
 
