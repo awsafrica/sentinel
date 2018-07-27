@@ -32,7 +32,7 @@ def is_valid_brixcoin_address(address, network='mainnet'):
         decoded = base58.b58decode_chk(address)
         address_version = ord(decoded[0:1])
     except:
-        # rescue from exception, not a valid Dash address
+        # rescue from exception, not a valid Brixcoin address
         return False
 
     if (address_version != brixcoin_version):
@@ -163,7 +163,7 @@ def create_superblock(proposals, event_block_height, budget_max, sb_epoch_time, 
             payment_amounts='|'.join([pd['amount'] for pd in payments]),
             proposal_hashes='|'.join([pd['proposal'] for pd in payments])
         )
-        data_size = len(sb_temp.dashd_serialise())
+        data_size = len(sb_temp.brixcoind_serialise())
 
         if data_size > maxgovobjdatasize:
             printdbg("MAX_GOVERNANCE_OBJECT_DATA_SIZE limit reached!")
@@ -194,7 +194,7 @@ def create_superblock(proposals, event_block_height, budget_max, sb_epoch_time, 
 
 
 # shims 'til we can fix the JSON format
-def SHIM_serialise_for_dashd(sentinel_hex):
+def SHIM_serialise_for_brixcoind(sentinel_hex):
     from models import GOVOBJ_TYPE_STRINGS
 
     # unpack
