@@ -76,7 +76,7 @@ def test_valid_brixcoin_address():
     assert is_valid_brixcoin_address(test, 'testnet') is True
 
 
-def test_invalid_dash_address():
+def test_invalid_brixcoin_address():
     from brixcoinlib import is_valid_brixcoin_address
 
     main = invalid_brixcoin_address()
