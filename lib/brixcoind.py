@@ -129,7 +129,7 @@ class BrixcoinDaemon():
     # "my" votes refers to the current running masternode
     # memoized on a per-run, per-object_hash basis
     def get_my_gobject_votes(self, object_hash):
-        import dashlib
+        import brixcoinlib
         if not self.gobject_votes.get(object_hash):
             my_vin = self.get_current_masternode_vin()
             # if we can't get MN vin from output of `masternode status`,
@@ -141,7 +141,7 @@ class BrixcoinDaemon():
 
             cmd = ['gobject', 'getcurrentvotes', object_hash, txid, vout_index]
             raw_votes = self.rpc_command(*cmd)
-            self.gobject_votes[object_hash] = dashlib.parse_raw_votes(raw_votes)
+            self.gobject_votes[object_hash] = brixcoinlib.parse_raw_votes(raw_votes)
 
         return self.gobject_votes[object_hash]
 
@@ -169,7 +169,7 @@ class BrixcoinDaemon():
         # find the elected MN vin for superblock creation...
         current_block_hash = self.current_block_hash()
         mn_list = self.get_masternodes()
-        winner = dashlib.elect_mn(block_hash=current_block_hash, mnlist=mn_list)
+        winner = brixcoinlib.elect_mn(block_hash=current_block_hash, mnlist=mn_list)
         my_vin = self.get_current_masternode_vin()
 
         # print "current_block_hash: [%s]" % current_block_hash
@@ -220,7 +220,7 @@ class BrixcoinDaemon():
     @property
     def has_sentinel_ping(self):
         getinfo = self.rpc_command('getinfo')
-        return (getinfo['protocolversion'] >= config.min_dashd_proto_version_with_sentinel_ping)
+        return (getinfo['protocolversion'] >= config.min_brixcoind_proto_version_with_sentinel_ping)
 
     def ping(self):
         self.rpc_command('sentinelping', config.sentinel_version)
