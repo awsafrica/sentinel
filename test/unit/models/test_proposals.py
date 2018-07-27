@@ -171,7 +171,7 @@ def test_proposal_is_valid(proposal):
     proposal.payment_address = '221 B Baker St., London, United Kingdom'
     assert proposal.is_valid() is False
 
-    # this is actually the Dash foundation multisig address...
+    # this is actually the Brixcoin foundation multisig address...
     proposal.payment_address = '7gnwGHt17heGpG9Crfeh4KGpYNFugPhJdh'
     assert proposal.is_valid() is False
 
@@ -256,7 +256,7 @@ def test_proposal_is_valid(proposal):
     proposal = Proposal(**orig.get_dict())
 
     # ============================================================
-    # ensure proposal can't request negative dash
+    # ensure proposal can't request negative brixcoin
     # ============================================================
     proposal.payment_amount = -1
     assert proposal.is_valid() is False
