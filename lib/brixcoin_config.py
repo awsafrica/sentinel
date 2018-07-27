@@ -7,11 +7,11 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'lib'))
 from misc import printdbg
 
 
-class DashConfig():
+class BrixcoinConfig():
 
     @classmethod
     def slurp_config_file(self, filename):
-        # read dash.conf config but skip commented lines
+        # read brixcoin.conf config but skip commented lines
         f = io.open(filename)
         lines = []
         for line in f:
@@ -20,7 +20,7 @@ class DashConfig():
             lines.append(line)
         f.close()
 
-        # data is dash.conf without commented lines
+        # data is brixcoin.conf without commented lines
         data = ''.join(lines)
 
         return data
