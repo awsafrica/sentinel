@@ -20,7 +20,7 @@ def get_brixcoin_conf():
     else:
         home = os.environ.get('HOME')
 
-        dash_conf = os.path.join(home, ".brixcoincore/brixcoin.conf")
+        brixcoin_conf = os.path.join(home, ".brixcoincore/brixcoin.conf")
         if sys.platform == 'darwin':
             brixcoin_conf = os.path.join(home, "Library/Application Support/BrixcoinCore/brixcoin.conf")
 
