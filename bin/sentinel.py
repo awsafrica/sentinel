@@ -113,7 +113,7 @@ def is_brixcoind_port_open(brixcoind):
     # operators if it's not
     port_open = False
     try:
-        info = dashd.rpc_command('getgovernanceinfo')
+        info = brixcoind.rpc_command('getgovernanceinfo')
         port_open = True
     except (socket.error, JSONRPCException) as e:
         print("%s" % e)
@@ -127,7 +127,7 @@ def main():
 
     # check brixcoind connectivity
     if not is_brixcoind_port_open(brixcoind):
-        print("Cannot connect to dashd. Please ensure brixcoind is running and the JSONRPC port is open to Sentinel.")
+        print("Cannot connect to brixcoind. Please ensure brixcoind is running and the JSONRPC port is open to Sentinel.")
         return
 
     # check brixcoind sync
@@ -174,7 +174,7 @@ def main():
         sentinel_ping(brixcoind)
 
     # auto vote network objects as valid/invalid
-    # check_object_validity(dashd)
+    # check_object_validity(brixcoind)
 
     # vote to delete expired proposals
     prune_expired_proposals(brixcoind)
