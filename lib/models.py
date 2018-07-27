@@ -28,7 +28,7 @@ db.connect()
 
 
 # TODO: lookup table?
-DASHD_GOVOBJ_TYPES = {
+BRIXCOIND_GOVOBJ_TYPES = {
     'proposal': 1,
     'superblock': 2,
 }
@@ -76,7 +76,7 @@ class GovernanceObject(BaseModel):
 
     # sync brixcoind gobject list with our local relational DB backend
     @classmethod
-    def sync(self, dashd):
+    def sync(self, brixcoind):
         golist = brixcoind.rpc_command('gobject', 'list')
 
         # objects which are removed from the network should be removed from the DB
