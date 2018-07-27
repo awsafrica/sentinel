@@ -5,7 +5,7 @@ sys.path.append(os.path.normpath(os.path.join(os.path.dirname(__file__), '../lib
 import init
 import config
 import misc
-from brixcoind import DashDaemon
+from brixcoind import BrixcoinDaemon
 from models import Superblock, Proposal, GovernanceObject
 from models import VoteSignals, VoteOutcomes, Transient
 import socket
@@ -83,7 +83,7 @@ def attempt_superblock_creation(brixcoind):
     # find the deterministic SB w/highest object_hash in the DB
     dbrec = Superblock.find_highest_deterministic(sb.hex_hash())
     if dbrec:
-        dbrec.vote(dashd, VoteSignals.funding, VoteOutcomes.yes)
+        dbrec.vote(brixcoind, VoteSignals.funding, VoteOutcomes.yes)
 
         # any other blocks which match the sb_hash are duplicates, delete them
         for sb in Superblock.select().where(Superblock.sb_hash == sb.hex_hash()):
@@ -96,9 +96,9 @@ def attempt_superblock_creation(brixcoind):
         printdbg("The correct superblock wasn't found on the network...")
 
     # if we are the elected masternode...
-    if (dashd.we_are_the_winner()):
+    if (brixcoind.we_are_the_winner()):
         printdbg("we are the winner! Submit SB to network")
-        sb.submit(dashd)
+        sb.submit(brixcoind)
 
 
 def check_object_validity(dashd):
@@ -108,7 +108,7 @@ def check_object_validity(dashd):
             obj.vote_validity(dashd)
 
 
-def is_dashd_port_open(dashd):
+def is_brixcoind_port_open(brixcoind):
     # test socket open before beginning, display instructive message to MN
     # operators if it's not
     port_open = False
@@ -122,21 +122,21 @@ def is_dashd_port_open(dashd):
 
 
 def main():
-    dashd = DashDaemon.from_dash_conf(config.dash_conf)
+    brixcoind = BrixcoinDaemon.from_brixcoin_conf(config.brixcoin_conf)
     options = process_args()
 
-    # check dashd connectivity
-    if not is_dashd_port_open(dashd):
+    # check brixcoind connectivity
+    if not is_brixcoind_port_open(brixcoind):
         print("Cannot connect to dashd. Please ensure dashd is running and the JSONRPC port is open to Sentinel.")
         return
 
-    # check dashd sync
-    if not dashd.is_synced():
+    # check brixcoind sync
+    if not brixcoind.is_synced():
         print("dashd not synced with network! Awaiting full sync before running Sentinel.")
         return
 
     # ensure valid masternode
-    if not dashd.is_masternode():
+    if not brixcoind.is_masternode():
         print("Invalid Masternode Status, cannot continue.")
         return
 
@@ -170,7 +170,7 @@ def main():
     # load "gobject list" rpc command data, sync objects into internal database
     perform_dashd_object_sync(dashd)
 
-    if dashd.has_sentinel_ping:
+    if brixcoind.has_sentinel_ping:
         sentinel_ping(dashd)
 
     # auto vote network objects as valid/invalid
