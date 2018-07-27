@@ -1,9 +1,9 @@
 #!/bin/bash
 set -evx
 
-mkdir ~/.dashcore
+mkdir ~/.brixcoincore
 
 # safety check
-if [ ! -f ~/.dashcore/.dash.conf ]; then
-  cp share/dash.conf.example ~/.dashcore/dash.conf
+if [ ! -f ~/.brixcoincore/.dash.conf ]; then
+  cp share/brixcoin.conf.example ~/.brixcoincore/brixcoin.conf
 fi
