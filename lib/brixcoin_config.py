@@ -27,16 +27,16 @@ class DashConfig():
 
     @classmethod
     def get_rpc_creds(self, data, network='mainnet'):
-        # get rpc info from dash.conf
+        # get rpc info from brixcoin.conf
         match = re.findall(r'rpc(user|password|port)=(.*?)$', data, re.MULTILINE)
 
         # python >= 2.7
         creds = {key: value for (key, value) in match}
 
-        # standard Dash defaults...
-        default_port = 9998 if (network == 'mainnet') else 19998
+        # standard Brixcoin defaults...
+        default_port = 35555 if (network == 'mainnet') else 35556
 
-        # use default port for network if not specified in dash.conf
+        # use default port for network if not specified in brixcoin.conf
         if not ('port' in creds):
             creds[u'port'] = default_port
 
