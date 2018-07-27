@@ -88,7 +88,7 @@ def attempt_superblock_creation(brixcoind):
         # any other blocks which match the sb_hash are duplicates, delete them
         for sb in Superblock.select().where(Superblock.sb_hash == sb.hex_hash()):
             if not sb.voted_on(signal=VoteSignals.funding):
-                sb.vote(dashd, VoteSignals.delete, VoteOutcomes.yes)
+                sb.vote(brixcoind, VoteSignals.delete, VoteOutcomes.yes)
 
         printdbg("VOTED FUNDING FOR SB! We're done here 'til next superblock cycle.")
         return
@@ -168,7 +168,7 @@ def main():
     # ========================================================================
     #
     # load "gobject list" rpc command data, sync objects into internal database
-    perform_brixcoind_object_sync(dashd)
+    perform_brixcoind_object_sync(brixcoind)
 
     if brixcoind.has_sentinel_ping:
         sentinel_ping(brixcoind)
