@@ -65,14 +65,14 @@ def has_brixcoin_conf():
     # ensure brixcoin_conf exists & readable
     #
     # if not, print a message stating that Brixcoin Core must be installed and
-    # configured, including JSONRPC access in dash.conf
+    # configured, including JSONRPC access in brixcoin.conf
     try:
         f = io.open(config.brixcoin_conf)
         valid_brixcoin_conf = True
     except IOError as e:
         print(e)
 
-    return valid_dash_conf
+    return valid_brixcoin_conf
 
 
 # === begin main
@@ -94,7 +94,7 @@ def main():
         print("Please ensure correct database configuration.")
         sys.exit(1)
 
-    if not has_dash_conf():
+    if not has_brixcoin_conf():
         print("BrixcoinCore must be installed and configured, including JSONRPC access in brixcoin.conf")
         sys.exit(1)
 
