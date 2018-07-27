@@ -24,7 +24,7 @@ Update system packages and ensure virtualenv is installed:
 
 Make sure the local Brixcoin daemon running is at least version 12.1 (120100)
 
-    $ dash-cli getinfo | grep version
+    $ brixcoin-cli getinfo | grep version
 
 ### 2. Install Sentinel
 
@@ -84,4 +84,4 @@ Specifically:
 
 ### License
 
-Released under the MIT license, under the same terms as DashCore itself. See [LICENSE](LICENSE) for more info.
+Released under the MIT license, under the same terms as BrixcoinCore itself. See [LICENSE](LICENSE) for more info.
