@@ -11,7 +11,7 @@ from peewee import IntegerField, CharField, TextField, ForeignKeyField, DecimalF
 import peewee
 import playhouse.signals
 import misc
-import dashd
+import brixcoind
 from misc import (printdbg, is_numeric)
 import config
 from bitcoinrpc.authproxy import JSONRPCException
@@ -74,10 +74,10 @@ class GovernanceObject(BaseModel):
     class Meta:
         db_table = 'governance_objects'
 
-    # sync dashd gobject list with our local relational DB backend
+    # sync brixcoind gobject list with our local relational DB backend
     @classmethod
     def sync(self, dashd):
-        golist = dashd.rpc_command('gobject', 'list')
+        golist = brixcoind.rpc_command('gobject', 'list')
 
         # objects which are removed from the network should be removed from the DB
         try:
@@ -89,7 +89,7 @@ class GovernanceObject(BaseModel):
 
         for item in golist.values():
             try:
-                (go, subobj) = self.import_gobject_from_dashd(dashd, item)
+                (go, subobj) = self.import_gobject_from_dashd(brixcoind, item)
             except Exception as e:
                 printdbg("Got an error upon import: %s" % e)
 
@@ -101,9 +101,9 @@ class GovernanceObject(BaseModel):
         return query
 
     @classmethod
-    def import_gobject_from_dashd(self, dashd, rec):
+    def import_gobject_from_brixcoind(self, dashd, rec):
         import decimal
-        import dashlib
+        import brixcoinlib
         import binascii
         import gobject_json
 
@@ -133,11 +133,11 @@ class GovernanceObject(BaseModel):
         # set object_type in govobj table
         gobj_dict['object_type'] = subclass.govobj_type
 
-        # exclude any invalid model data from dashd...
+        # exclude any invalid model data from brixcoind...
         valid_keys = subclass.serialisable_fields()
         subdikt = {k: dikt[k] for k in valid_keys if k in dikt}
 
-        # get/create, then sync vote counts from dashd, with every run
+        # get/create, then sync vote counts from brixcoind, with every run
         govobj, created = self.get_or_create(object_hash=object_hash, defaults=gobj_dict)
         if created:
             printdbg("govobj created = %s" % created)
@@ -146,19 +146,19 @@ class GovernanceObject(BaseModel):
             printdbg("govobj updated = %d" % count)
         subdikt['governance_object'] = govobj
 
-        # get/create, then sync payment amounts, etc. from dashd - Dashd is the master
+        # get/create, then sync payment amounts, etc. from dashd - Brixcoind is the master
         try:
             newdikt = subdikt.copy()
             newdikt['object_hash'] = object_hash
             if subclass(**newdikt).is_valid() is False:
-                govobj.vote_delete(dashd)
+                govobj.vote_delete(brixcoind)
                 return (govobj, None)
 
             subobj, created = subclass.get_or_create(object_hash=object_hash, defaults=subdikt)
         except Exception as e:
             # in this case, vote as delete, and log the vote in the DB
-            printdbg("Got invalid object from dashd! %s" % e)
-            govobj.vote_delete(dashd)
+            printdbg("Got invalid object from brixcoind! %s" % e)
+            govobj.vote_delete(brixcoind)
             return (govobj, None)
 
         if created:
@@ -170,9 +170,9 @@ class GovernanceObject(BaseModel):
         # ATM, returns a tuple w/gov attributes and the govobj
         return (govobj, subobj)
 
-    def vote_delete(self, dashd):
+    def vote_delete(self, brixcoind):
         if not self.voted_on(signal=VoteSignals.delete, outcome=VoteOutcomes.yes):
-            self.vote(dashd, VoteSignals.delete, VoteOutcomes.yes)
+            self.vote(brixcoind, VoteSignals.delete, VoteOutcomes.yes)
         return
 
     def get_vote_command(self, signal, outcome):
@@ -180,8 +180,8 @@ class GovernanceObject(BaseModel):
                signal.name, outcome.name]
         return cmd
 
-    def vote(self, dashd, signal, outcome):
-        import dashlib
+    def vote(self, brixcoind, signal, outcome):
+        import brixcoinlib
 
         # At this point, will probably never reach here. But doesn't hurt to
         # have an extra check just in case objects get out of sync (people will
