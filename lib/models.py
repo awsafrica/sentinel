@@ -316,7 +316,7 @@ class Proposal(GovernanceClass, BaseModel):
                 return False
 
             # payment address is valid base58 brixcoin addr, non-multisig
-            if not dashlib.is_valid_brixcoin_address(self.payment_address, config.network):
+            if not brixcoinlib.is_valid_brixcoin_address(self.payment_address, config.network):
                 printdbg("\tPayment address [%s] not a valid Brixcoin address for network [%s], returning False" % (self.payment_address, config.network))
                 return False
 
