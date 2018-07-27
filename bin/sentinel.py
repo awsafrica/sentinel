@@ -5,7 +5,7 @@ sys.path.append(os.path.normpath(os.path.join(os.path.dirname(__file__), '../lib
 import init
 import config
 import misc
-from dashd import DashDaemon
+from brixcoind import DashDaemon
 from models import Superblock, Proposal, GovernanceObject
 from models import VoteSignals, VoteOutcomes, Transient
 import socket
@@ -19,30 +19,30 @@ from scheduler import Scheduler
 import argparse
 
 
-# sync dashd gobject list with our local relational DB backend
-def perform_dashd_object_sync(dashd):
-    GovernanceObject.sync(dashd)
+# sync brixcoind gobject list with our local relational DB backend
+def perform_brixcoind_object_sync(brixcoind):
+    GovernanceObject.sync(brixcoind)
 
 
-def prune_expired_proposals(dashd):
+def prune_expired_proposals(brixcoind):
     # vote delete for old proposals
-    for proposal in Proposal.expired(dashd.superblockcycle()):
-        proposal.vote(dashd, VoteSignals.delete, VoteOutcomes.yes)
+    for proposal in Proposal.expired(brixcoind.superblockcycle()):
+        proposal.vote(brixcoind, VoteSignals.delete, VoteOutcomes.yes)
 
 
-# ping dashd
-def sentinel_ping(dashd):
+# ping brixcoind
+def sentinel_ping(brixcoind):
     printdbg("in sentinel_ping")
 
-    dashd.ping()
+    brixcoind.ping()
 
     printdbg("leaving sentinel_ping")
 
 
-def attempt_superblock_creation(dashd):
-    import dashlib
+def attempt_superblock_creation(brixcoind):
+    import brixcoinlib
 
-    if not dashd.is_masternode():
+    if not brixcoind.is_masternode():
         print("We are not a Masternode... can't submit superblocks!")
         return
 
@@ -53,7 +53,7 @@ def attempt_superblock_creation(dashd):
     # has this masternode voted on *any* superblocks at the given event_block_height?
     # have we voted FUNDING=YES for a superblock for this specific event_block_height?
 
-    event_block_height = dashd.next_superblock_height()
+    event_block_height = brixcoind.next_superblock_height()
 
     if Superblock.is_voted_funding(event_block_height):
         # printdbg("ALREADY VOTED! 'til next time!")
@@ -66,16 +66,16 @@ def attempt_superblock_creation(dashd):
         # now return, we're done
         return
 
-    if not dashd.is_govobj_maturity_phase():
+    if not brixcoind.is_govobj_maturity_phase():
         printdbg("Not in maturity phase yet -- will not attempt Superblock")
         return
 
-    proposals = Proposal.approved_and_ranked(proposal_quorum=dashd.governance_quorum(), next_superblock_max_budget=dashd.next_superblock_max_budget())
-    budget_max = dashd.get_superblock_budget_allocation(event_block_height)
-    sb_epoch_time = dashd.block_height_to_epoch(event_block_height)
+    proposals = Proposal.approved_and_ranked(proposal_quorum=brixcoind.governance_quorum(), next_superblock_max_budget=brixcoind.next_superblock_max_budget())
+    budget_max = brixcoind.get_superblock_budget_allocation(event_block_height)
+    sb_epoch_time = brixcoind.block_height_to_epoch(event_block_height)
 
-    maxgovobjdatasize = dashd.govinfo['maxgovobjdatasize']
-    sb = dashlib.create_superblock(proposals, event_block_height, budget_max, sb_epoch_time, maxgovobjdatasize)
+    maxgovobjdatasize = brixcoind.govinfo['maxgovobjdatasize']
+    sb = brixcoinlib.create_superblock(proposals, event_block_height, budget_max, sb_epoch_time, maxgovobjdatasize)
     if not sb:
         printdbg("No superblock created, sorry. Returning.")
         return
