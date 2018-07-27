@@ -24,12 +24,12 @@ def test_brixcoind():
             genesis_hash = u'00000bafbc94add76cb75e2ec92894837288a481e5c005f6563d91623bf8bc2c'
 
     creds = BrixcoinConfig.get_rpc_creds(config_text, network)
-    dashd = BrixcoinDaemon(**creds)
+    brixcoind = BrixcoinDaemon(**creds)
     assert brixcoind.rpc_command is not None
 
     assert hasattr(brixcoind, 'rpc_connection')
 
-    # Dash testnet block 0 hash == 00000bafbc94add76cb75e2ec92894837288a481e5c005f6563d91623bf8bc2c
+    # Brixcoin testnet block 0 hash == 00000bafbc94add76cb75e2ec92894837288a481e5c005f6563d91623bf8bc2c
     # test commands without arguments
     info = brixcoind.rpc_command('getinfo')
     info_keys = [
