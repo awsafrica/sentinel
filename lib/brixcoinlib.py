@@ -211,8 +211,8 @@ def SHIM_serialise_for_brixcoind(sentinel_hex):
     obj = [(govtype_string, obj,)]
 
     # re-pack
-    dashd_hex = serialise(obj)
-    return dashd_hex
+    brixcoind_hex = serialise(obj)
+    return brixcoind_hex
 
 
 # convenience
