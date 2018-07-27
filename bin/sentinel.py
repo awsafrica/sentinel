@@ -61,7 +61,7 @@ def attempt_superblock_creation(brixcoind):
         # vote down any new SBs because we've already chosen a winner
         for sb in Superblock.at_height(event_block_height):
             if not sb.voted_on(signal=VoteSignals.funding):
-                sb.vote(dashd, VoteSignals.funding, VoteOutcomes.no)
+                sb.vote(brixcoind, VoteSignals.funding, VoteOutcomes.no)
 
         # now return, we're done
         return
@@ -101,11 +101,11 @@ def attempt_superblock_creation(brixcoind):
         sb.submit(brixcoind)
 
 
-def check_object_validity(dashd):
+def check_object_validity(brixcoind):
     # vote (in)valid objects
     for gov_class in [Proposal, Superblock]:
         for obj in gov_class.select():
-            obj.vote_validity(dashd)
+            obj.vote_validity(brixcoind)
 
 
 def is_brixcoind_port_open(brixcoind):
@@ -127,12 +127,12 @@ def main():
 
     # check brixcoind connectivity
     if not is_brixcoind_port_open(brixcoind):
-        print("Cannot connect to dashd. Please ensure dashd is running and the JSONRPC port is open to Sentinel.")
+        print("Cannot connect to dashd. Please ensure brixcoind is running and the JSONRPC port is open to Sentinel.")
         return
 
     # check brixcoind sync
     if not brixcoind.is_synced():
-        print("dashd not synced with network! Awaiting full sync before running Sentinel.")
+        print("brixcoind not synced with network! Awaiting full sync before running Sentinel.")
         return
 
     # ensure valid masternode
@@ -168,19 +168,19 @@ def main():
     # ========================================================================
     #
     # load "gobject list" rpc command data, sync objects into internal database
-    perform_dashd_object_sync(dashd)
+    perform_brixcoind_object_sync(dashd)
 
     if brixcoind.has_sentinel_ping:
-        sentinel_ping(dashd)
+        sentinel_ping(brixcoind)
 
     # auto vote network objects as valid/invalid
     # check_object_validity(dashd)
 
     # vote to delete expired proposals
-    prune_expired_proposals(dashd)
+    prune_expired_proposals(brixcoind)
 
     # create a Superblock if necessary
-    attempt_superblock_creation(dashd)
+    attempt_superblock_creation(brixcoind)
 
     # schedule the next run
     Scheduler.schedule_next_run()
