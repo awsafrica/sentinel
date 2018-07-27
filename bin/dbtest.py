@@ -9,17 +9,17 @@ import config
 from models import Superblock, Proposal, GovernanceObject, Setting, Signal, Vote, Outcome
 from models import VoteSignals, VoteOutcomes
 from peewee import PeeweeException  # , OperationalError, IntegrityError
-from dashd import DashDaemon
-import dashlib
+from brixcoind import BrixcoinDaemon
+import brixcoinlib
 from decimal import Decimal
-dashd = DashDaemon.from_dash_conf(config.dash_conf)
+brixcoind = BrixcoinDaemon.from_brixcoin_conf(config.brixcoin_conf)
 import misc
 # ==============================================================================
 # do stuff here
 
 pr = Proposal(
     name='proposal7',
-    url='https://dashcentral.com/proposal7',
+    url='https://brixcoincentral.com/proposal7',
     payment_address='yTC62huR4YQEPn9AJHjnQxxreHSbgAoatV',
     payment_amount=39.23,
     start_epoch=1483250400,
@@ -56,7 +56,7 @@ else:
     print("Within window, we're good!")
 
 # pdb.set_trace()
-# dashd.get_object_list()
+# brixcoind.get_object_list()
 # ==============================================================================
 # pdb.set_trace()
 1
