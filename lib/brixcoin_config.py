@@ -40,7 +40,7 @@ class BrixcoinConfig():
         if not ('port' in creds):
             creds[u'port'] = default_port
 
-        # convert to an int if taken from dash.conf
+        # convert to an int if taken from brixcoin.conf
         creds[u'port'] = int(creds[u'port'])
 
         # return a dictionary with RPC credential key, value pairs
