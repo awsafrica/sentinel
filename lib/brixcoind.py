@@ -165,7 +165,7 @@ class BrixcoinDaemon():
         return (current_height >= maturity_phase_start_block)
 
     def we_are_the_winner(self):
-        import dashlib
+        import brixcoinlib
         # find the elected MN vin for superblock creation...
         current_block_hash = self.current_block_hash()
         mn_list = self.get_masternodes()
@@ -192,7 +192,7 @@ class BrixcoinDaemon():
         if (diff < 0):
             raise Exception("Oh Noes.")
 
-        future_seconds = dashlib.blocks_to_seconds(diff)
+        future_seconds = brixcoinlib.blocks_to_seconds(diff)
         estimated_epoch = int(time.time() + future_seconds)
 
         return estimated_epoch
