@@ -146,7 +146,7 @@ class GovernanceObject(BaseModel):
             printdbg("govobj updated = %d" % count)
         subdikt['governance_object'] = govobj
 
-        # get/create, then sync payment amounts, etc. from dashd - Brixcoind is the master
+        # get/create, then sync payment amounts, etc. from brixcoind - Brixcoind is the master
         try:
             newdikt = subdikt.copy()
             newdikt['object_hash'] = object_hash
@@ -211,10 +211,10 @@ class GovernanceObject(BaseModel):
 
         vote_command = self.get_vote_command(signal, outcome)
         printdbg(' '.join(vote_command))
-        output = dashd.rpc_command(*vote_command)
+        output = brixcoind.rpc_command(*vote_command)
 
         # extract vote output parsing to external lib
-        voted = dashlib.did_we_vote(output)
+        voted = brixcoinlib.did_we_vote(output)
 
         if voted:
             printdbg('VOTE success, saving Vote object to database')
@@ -222,11 +222,11 @@ class GovernanceObject(BaseModel):
                  object_hash=self.object_hash).save()
         else:
             printdbg('VOTE failed, trying to sync with network vote')
-            self.sync_network_vote(dashd, signal)
+            self.sync_network_vote(brixcoind, signal)
 
-    def sync_network_vote(self, dashd, signal):
+    def sync_network_vote(self, brixcoind, signal):
         printdbg('\tSyncing network vote for object %s with signal %s' % (self.object_hash, signal.name))
-        vote_info = dashd.get_my_gobject_votes(self.object_hash)
+        vote_info = brixcoind.get_my_gobject_votes(self.object_hash)
         for vdikt in vote_info:
             if vdikt['signal'] != signal.name:
                 continue
@@ -279,13 +279,13 @@ class Proposal(GovernanceClass, BaseModel):
     # src/governance-validators.cpp
     MAX_DATA_SIZE = 512
 
-    govobj_type = DASHD_GOVOBJ_TYPES['proposal']
+    govobj_type = BRIXCOIND_GOVOBJ_TYPES['proposal']
 
     class Meta:
         db_table = 'proposals'
 
     def is_valid(self):
-        import dashlib
+        import brixcoinlib
 
         printdbg("In Proposal#is_valid, for Proposal: %s" % self.__dict__)
 
@@ -315,9 +315,9 @@ class Proposal(GovernanceClass, BaseModel):
                 printdbg("\tProposal amount [%s] is negative or zero, returning False" % self.payment_amount)
                 return False
 
-            # payment address is valid base58 dash addr, non-multisig
-            if not dashlib.is_valid_dash_address(self.payment_address, config.network):
-                printdbg("\tPayment address [%s] not a valid Dash address for network [%s], returning False" % (self.payment_address, config.network))
+            # payment address is valid base58 brixcoin addr, non-multisig
+            if not dashlib.is_valid_brixcoin_address(self.payment_address, config.network):
+                printdbg("\tPayment address [%s] not a valid Brixcoin address for network [%s], returning False" % (self.payment_address, config.network))
                 return False
 
             # URL
@@ -330,7 +330,7 @@ class Proposal(GovernanceClass, BaseModel):
                 printdbg("\tProposal URL [%s] has whitespace, returning False" % self.name)
                 return False
 
-            # Dash Core restricts proposals to 512 bytes max
+            # Brixcoin Core restricts proposals to 512 bytes max
             if len(self.serialise()) > (self.MAX_DATA_SIZE * 2):
                 printdbg("\tProposal [%s] is too big, returning False" % self.name)
                 return False
@@ -430,14 +430,14 @@ class Superblock(BaseModel, GovernanceClass):
     sb_hash = CharField()
     object_hash = CharField(max_length=64)
 
-    govobj_type = DASHD_GOVOBJ_TYPES['superblock']
+    govobj_type = BRIXCOIND_GOVOBJ_TYPES['superblock']
     only_masternode_can_submit = True
 
     class Meta:
         db_table = 'superblocks'
 
     def is_valid(self):
-        import dashlib
+        import brixcoinlib
         import decimal
 
         printdbg("In Superblock#is_valid, for SB: %s" % self.__dict__)
@@ -445,7 +445,7 @@ class Superblock(BaseModel, GovernanceClass):
         # it's a string from the DB...
         addresses = self.payment_addresses.split('|')
         for addr in addresses:
-            if not dashlib.is_valid_dash_address(addr, config.network):
+            if not brixcoinlib.is_valid_dash_address(addr, config.network):
                 printdbg("\tInvalid address [%s], returning False" % addr)
                 return False
 
