@@ -1,4 +1,4 @@
-# Dash Sentinel
+# Brixcoin Sentinel
 
 An all-powerful toolset for BRIXCOIN.
 
