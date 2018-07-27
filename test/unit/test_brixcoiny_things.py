@@ -61,7 +61,7 @@ def mn_status_bad():
 # ========================================================================
 
 
-def test_valid_dash_address():
+def test_valid_brixcoin_address():
     from brixcoinlib import is_valid_brixcoin_address
 
     main = valid_brixcoin_address()
@@ -77,7 +77,7 @@ def test_valid_dash_address():
 
 
 def test_invalid_dash_address():
-    from dashlib import is_valid_dash_address
+    from brixcoinlib import is_valid_brixcoin_address
 
     main = invalid_brixcoin_address()
     test = invalid_brixcoin_address('testnet')
@@ -134,7 +134,7 @@ def test_blocks_to_seconds():
     from decimal import Decimal
 
     precision = Decimal('0.001')
-    assert Decimal(dashlib.blocks_to_seconds(0)) == Decimal(0.0)
-    assert Decimal(dashlib.blocks_to_seconds(2)).quantize(precision) \
+    assert Decimal(brixcoinlib.blocks_to_seconds(0)) == Decimal(0.0)
+    assert Decimal(brixcoinlib.blocks_to_seconds(2)).quantize(precision) \
         == Decimal(314.4).quantize(precision)
     assert int(brixcoinlib.blocks_to_seconds(16616)) == 2612035
