@@ -89,7 +89,7 @@ class GovernanceObject(BaseModel):
 
         for item in golist.values():
             try:
-                (go, subobj) = self.import_gobject_from_dashd(brixcoind, item)
+                (go, subobj) = self.import_gobject_from_brixcoind(brixcoind, item)
             except Exception as e:
                 printdbg("Got an error upon import: %s" % e)
 
@@ -101,7 +101,7 @@ class GovernanceObject(BaseModel):
         return query
 
     @classmethod
-    def import_gobject_from_brixcoind(self, dashd, rec):
+    def import_gobject_from_brixcoind(self, brixcoind, rec):
         import decimal
         import brixcoinlib
         import binascii
