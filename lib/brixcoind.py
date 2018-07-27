@@ -13,7 +13,7 @@ from decimal import Decimal
 import time
 
 
-class DashDaemon():
+class BrixcoinDaemon():
     def __init__(self, **kwargs):
         host = kwargs.get('host', '127.0.0.1')
         user = kwargs.get('user')
@@ -22,7 +22,7 @@ class DashDaemon():
 
         self.creds = (user, password, host, port)
 
-        # memoize calls to some dashd methods
+        # memoize calls to some brixcoind methods
         self.governance_info = None
         self.gobject_votes = {}
 
@@ -31,10 +31,10 @@ class DashDaemon():
         return AuthServiceProxy("http://{0}:{1}@{2}:{3}".format(*self.creds))
 
     @classmethod
-    def from_dash_conf(self, dash_dot_conf):
-        from dash_config import DashConfig
-        config_text = DashConfig.slurp_config_file(dash_dot_conf)
-        creds = DashConfig.get_rpc_creds(config_text, config.network)
+    def from_dash_conf(self, brixcoin_dot_conf):
+        from brixcoin_config import BrixcoinConfig
+        config_text = BrixcoinConfig.slurp_config_file(brixcoin_dot_conf)
+        creds = BrixcoinConfig.get_rpc_creds(config_text, config.network)
 
         creds[u'host'] = config.rpc_host
 
@@ -179,7 +179,7 @@ class DashDaemon():
         return (winner == my_vin)
 
     def estimate_block_time(self, height):
-        import dashlib
+        import brixcoinlib
         """
         Called by block_height_to_epoch if block height is in the future.
         Call `block_height_to_epoch` instead of this method.
