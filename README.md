@@ -22,7 +22,7 @@ Update system packages and ensure virtualenv is installed:
     $ sudo apt-get update
     $ sudo apt-get -y install python-virtualenv
 
-Make sure the local Brixcoin daemon running is at least version 12.1 (120100)
+Make sure the local Brixcoin daemon running is at least version 0.12.3 (d5ee9b1)
 
     $ brixcoin-cli getinfo | grep version
 
