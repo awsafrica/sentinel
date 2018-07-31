@@ -3,7 +3,7 @@
 An all-powerful toolset for BRIXCOIN.
 
 
-Sentinel is an autonomous agent for persisting, processing and automating Brixcoin governance objects and tasks, and for expanded functions in the upcoming Brixcoin V13 release (Claybrix).
+Sentinel is an autonomous agent for persisting, processing and automating Brixcoin governance objects and tasks.
 
 Sentinel is implemented as a Python application that binds to a local version 12 brixcoind instance on each Brixcoin Masternode.
 
