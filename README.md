@@ -7,7 +7,7 @@ Sentinel is an autonomous agent for persisting, processing and automating Brixco
 
 Sentinel is implemented as a Python application that binds to a local version 12 brixcoind instance on each Brixcoin Masternode.
 
-This guide covers installing Sentinel onto an existing Masternode in Ubuntu 14.04 / 16.04.
+This guide covers installing Sentinel onto an existing Masternode in Ubuntu 16.04.
 
 ## Installation
 
